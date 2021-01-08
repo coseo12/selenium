@@ -20,13 +20,15 @@ search_bar.send_keys(Keys.ENTER)
 
 shitty_element = WebDriverWait(browser, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "g-blk")))
 
-print(shitty_element)
+browser.execute_script(
+"""
+const shitty = arguments[0];
+shitty.parentElement.removeChild(shitty);
+""", shitty_element[0])
 
-# search_results = browser.find_elements_by_class_name("g")
+search_results = browser.find_elements_by_class_name("g")
 
-# for idx,search_result in enumerate(search_results):
-#     class_name = search_result.get_attribute("class")
-#     if "kno-kp mnr-c g-blk" not in class_name:
-#         search_result.screenshot(f"screenshots/{KEYWORD}x{idx}.png")
+for idx,search_result in enumerate(search_results):
+    search_result.screenshot(f"screenshots/{KEYWORD}x{idx}.png")
 
 browser.quit()
