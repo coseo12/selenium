@@ -6,29 +6,41 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-KEYWORD = "buy domain"
+class GoogleKeywordScreenshooter():
+    def __init__(self, keyword, screenshots_dir):
+        # self.browser = webdriver.Chrome(ChromeDriverManager().install())
+        self.browser = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+        self.keyword = keyword
+        self.screenshots_dir = screenshots_dir
 
-# browser = webdriver.Chrome(ChromeDriverManager().install())
-browser = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+    def start(self):
+        self.browser.get("https://google.com")
+        search_bar = self.browser.find_element_by_class_name("gLFyf")
+        search_bar.send_keys(self.keyword)
+        search_bar.send_keys(Keys.ENTER)
+        try:
+            shitty_element = WebDriverWait(self.browser, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "g-blk"))
+                )
+            self.browser.execute_script(
+            """
+            const shitty = arguments[0];
+            shitty.parentElement.removeChild(shitty);
+            """, shitty_element)
+        except Exception:
+            pass
+        search_results = self.browser.find_elements_by_class_name("g")
+        for idx,search_result in enumerate(search_results):
+            search_result.screenshot(f"{self.screenshots_dir}/{self.keyword}x{idx}.png")
 
-browser.get("https://google.com")
+    def finish(self):
+        self.browser.quit()
 
-search_bar = browser.find_element_by_class_name("gLFyf")
 
-search_bar.send_keys(KEYWORD)
-search_bar.send_keys(Keys.ENTER)
+domain_competitors = GoogleKeywordScreenshooter("buy domain", "screenshots")
+domain_competitors.start()
+domain_competitors.finish()
 
-shitty_element = WebDriverWait(browser, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "g-blk")))
-
-browser.execute_script(
-"""
-const shitty = arguments[0];
-shitty.parentElement.removeChild(shitty);
-""", shitty_element[0])
-
-search_results = browser.find_elements_by_class_name("g")
-
-for idx,search_result in enumerate(search_results):
-    search_result.screenshot(f"screenshots/{KEYWORD}x{idx}.png")
-
-browser.quit()
+python_competitors = GoogleKeywordScreenshooter("python book", "screenshots")
+python_competitors.start()
+python_competitors.finish()
