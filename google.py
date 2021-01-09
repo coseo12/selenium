@@ -1,6 +1,8 @@
 from selenium import webdriver
-# from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+
+# from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -8,8 +10,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 class GoogleKeywordScreenshooter():
     def __init__(self, keyword, screenshots_dir):
-        # self.browser = webdriver.Chrome(ChromeDriverManager().install())
-        self.browser = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+        options = Options()
+        options.add_argument("--headless")
+        self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+        # self.browser = webdriver.Firefox(executable_path=GeckoDriverManager().install())
         self.keyword = keyword
         self.screenshots_dir = screenshots_dir
 
